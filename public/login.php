@@ -33,10 +33,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <?php if (isset($error)) echo "<div class='alert alert-danger'>$error</div>"; ?>
       <form method="POST">
         <div class="mb-3">
-          <input type="text" name="user" class="form-control" placeholder="Usuario" required>
+          <input type="text" name="usuario" class="form-control" placeholder="Usuario" required>
         </div>
         <div class="mb-3">
-          <input type="password" name="pass" class="form-control" placeholder="Contraseña" required>
+          <input type="password" name="contrasena" class="form-control" placeholder="Contraseña" required>
         </div>
         <button type="submit" class="btn btn-primary w-100">Ingresar</button>
       </form>
