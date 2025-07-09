@@ -1,9 +1,15 @@
 <?php
-$usuario = "admin";
-$contrasena = "1234"; // puedes cambiar esto
+session_start();
+
+$usuario_valido = "admin";
+$contrasena_valida = "1234";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if ($_POST["user"] == $usuario && $_POST["pass"] == $contrasena) {
+    $usuario = $_POST["usuario"] ?? '';
+    $contrasena = $_POST["contrasena"] ?? '';
+
+    if ($usuario === $usuario_valido && $contrasena === $contrasena_valida) {
+        $_SESSION["logueado"] = true;
         header("Location: menu.php");
         exit;
     } else {
@@ -11,6 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+    
 <!DOCTYPE html>
 <html lang="es">
 <head>
