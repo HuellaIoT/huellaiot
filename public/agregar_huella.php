@@ -11,10 +11,7 @@ $SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 $mensaje = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    echo "<pre>";
-    print_r($_POST);
-    echo "</pre>";
-    
+
     $datos = [
         "nombres_completos" => $_POST["nombres_completos"] ?? '',
         "cedula" => $_POST["cedula"] ?? '',
@@ -47,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $response = curl_exec($ch);
     curl_close($ch);
 
-    $mensaje = "✅ Paciente guardado correctamente. Respuesta de Supabase: <pre>$response</pre>";
+    $mensaje = "✅ Paciente guardado correctamente.";
 }
 ?>
 
