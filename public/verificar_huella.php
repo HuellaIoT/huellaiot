@@ -24,7 +24,8 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     "apikey: $SUPABASE_API_KEY",
     "Authorization: Bearer $SUPABASE_API_KEY",
-    "Content-Type: application/json"
+    "Content-Type: application/json",
+    "Prefer: return=representation"
 ]);
 
 $response = curl_exec($ch);
