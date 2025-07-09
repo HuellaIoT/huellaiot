@@ -30,6 +30,13 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
 
 $response = curl_exec($ch);
 $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+if ($response === false) {
+    echo json_encode(["status" => "error", "message" => curl_error($ch)]);
+    curl_close($ch);
+    exit;
+}
+
 curl_close($ch);
 
 $data = json_decode($response, true);
