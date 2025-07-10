@@ -6,7 +6,7 @@ if (!isset($_SESSION["logueado"])) {
 }
 
 $SUPABASE_URL = 'https://atzvmpqawvgwtkadsyro.supabase.co';
-$SUPABASE_API_KEY = 'TU_API_KEY'; // Reemplaza por tu API KEY real
+$SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0enZtcHFhd3Znd3RrYWRzeXJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMzIzNTMsImV4cCI6MjA2NzYwODM1M30.lo7kUKgVCsawEOzf5emtkDKLoDJlF9rf4xsiBT_2pXE'; // Reemplaza por tu API KEY real
 
 $mensaje = "";
 $id = $_GET["id"] ?? '';
