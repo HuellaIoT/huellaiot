@@ -49,26 +49,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 // Obtener datos si hay ID
 $paciente = null;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Aquí actualizas los datos...
-    $mensaje = "✅ Datos actualizados correctamente";
-
-    // 🔁 SOLUCIÓN: volver a obtener los datos del paciente actualizado
-    $id = $_POST["id"] ?? '';
-    if ($id) {
-        $url = "$SUPABASE_URL/rest/v1/historia_clinica?id=eq.$id";
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "apikey: $SUPABASE_API_KEY",
-            "Authorization: Bearer $SUPABASE_API_KEY",
-            "Content-Type: application/json"
-        ]);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        $pacientes = json_decode($response, true);
-        $paciente = $pacientes[0] ?? null;
-    }
+if ($id && $_SERVER["REQUEST_METHOD"] !== "POST") {
+    $ch = curl_init("$SUPABASE_URL/rest/v1/historia_clinica?id=eq.$id&select=*");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "apikey: $SUPABASE_API_KEY",
+        "Authorization: Bearer $SUPABASE_API_KEY",
+        "Content-Type: application/json"
+    ]);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $pacientes = json_decode($response, true);
+    $paciente = $pacientes[0] ?? null;
 }
 ?>
 
@@ -161,8 +153,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
     </form>
     <?php else: ?>
-      <div class="alert alert-danger text-center">Paciente no encontrado.</div>
-      <div class="text-center mt-3">
+        <div class="text-center mt-3">
         <a href="menu.php" class="btn btn-secondary">Regresar al menú</a>
       </div>
     <?php endif; ?>
