@@ -153,6 +153,9 @@ if ($id && $_SERVER["REQUEST_METHOD"] !== "POST") {
     </form>
     <?php else: ?>
       <div class="alert alert-danger text-center">Paciente no encontrado.</div>
+      <div class="text-center mt-3">
+        <a href="menu.php" class="btn btn-secondary">Regresar al menú</a>
+      </div>
     <?php endif; ?>
   </div>
 </body>
