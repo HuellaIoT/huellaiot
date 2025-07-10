@@ -77,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <input type="text" name="telefono" class="form-control" placeholder="Teléfono">
         </div>
         <div class="col">
-          <input type="text" name="edad" class="form-control" placeholder="Edad">
+          <input type="text" name="edad" class="form-control" placeholder="Fecha de nacimiento">
         </div>
       </div>
       <div class="mb-3">
