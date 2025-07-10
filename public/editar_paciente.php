@@ -97,7 +97,7 @@ if ($id && $_SERVER["REQUEST_METHOD"] !== "POST") {
           <input type="text" name="telefono" class="form-control" value="<?= $paciente["telefono"] ?>" placeholder="Teléfono">
         </div>
         <div class="col">
-          <input type="text" name="edad" class="form-control" value="<?= $paciente["edad"] ?>" placeholder="Edad">
+          <input type="text" name="edad" class="form-control" value="<?= $paciente["edad"] ?>" placeholder="Fecha de nacimiento">
         </div>
       </div>
 
