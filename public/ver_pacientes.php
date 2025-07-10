@@ -48,7 +48,7 @@ $pacientes = json_decode($response, true);
             <th>Cédula</th>
             <th>Correo</th>
             <th>Seguro</th>
-            <th>Edad</th>
+            <th>Fecha de Nacimiento</th>
             <th>Teléfono</th>
             <th>Domicilio</th>
             <th>Contacto Emergencia</th>
