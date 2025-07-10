@@ -123,4 +123,37 @@ if ($id && $_SERVER["REQUEST_METHOD"] !== "POST") {
 
       <div class="row mb-3">
         <div class="col">
-          <input type="text" name="tipo_sangre" class="form-control" value="<?= $paciente["tipo_sangre"] ?>" placeholder="Tipo de sangre"_]()_
+          <input type="text" name="tipo_sangre" class="form-control" value="<?= $paciente["tipo_sangre"] ?>" placeholder="Tipo de sangre">
+        </div>
+        <div class="col">
+          <input type="text" name="huella_dactilar" class="form-control" value="<?= $paciente["huella_dactilar"] ?>" placeholder="Código de Huella">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <input type="text" name="cirugias" class="form-control" value="<?= $paciente["cirugias"] ?>" placeholder="Cirugías">
+      </div>
+
+      <div class="mb-3">
+        <input type="text" name="patologias" class="form-control" value="<?= $paciente["patologias"] ?>" placeholder="Patologías">
+      </div>
+
+      <div class="mb-3">
+        <input type="text" name="alergias" class="form-control" value="<?= $paciente["alergias"] ?>" placeholder="Alergias">
+      </div>
+
+      <div class="mb-3">
+        <textarea name="historial_medico" class="form-control" placeholder="Historial Médico"><?= $paciente["historial_medico"] ?></textarea>
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        <a href="ver_pacientes.php" class="btn btn-secondary ms-2">Regresar</a>
+      </div>
+    </form>
+    <?php else: ?>
+      <div class="alert alert-danger text-center">Paciente no encontrado.</div>
+    <?php endif; ?>
+  </div>
+</body>
+</html>
