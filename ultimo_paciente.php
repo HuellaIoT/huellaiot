@@ -23,8 +23,11 @@ if (!empty($data)) {
         "paciente" => [
             "nombre" => $ultimoPaciente["nombre"],
             "edad" => $ultimoPaciente["edad"],
+            "domicilio" => $paciente['domicilio'],
+            "parentesco" => $paciente['parentesco'],
+            "emergencia" => $paciente['contacto_emergencia'],
             "diagnostico" => $ultimoPaciente["diagnostico"]
-            // Agrega otros campos según necesites
+                     // Agrega otros campos según necesites
         ]
     ]);
 } else {
