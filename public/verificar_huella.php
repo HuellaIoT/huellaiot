@@ -17,8 +17,6 @@ if (empty($codigo)) {
     exit;
 }
 
-error_log("Recibido código: $codigo"); // Depuración en logs del servidor
-
 // Registrar la petición en la tabla peticiones_log
 $log_data = [
     "codigo" => $codigo,
@@ -41,8 +39,6 @@ curl_setopt($ch_log, CURLOPT_HTTPHEADER, [
 $log_response = curl_exec($ch_log);
 $log_http_code = curl_getinfo($ch_log, CURLINFO_HTTP_CODE);
 curl_close($ch_log);
-
-error_log("Registro en peticiones_log - Código HTTP: $log_http_code, Respuesta: $log_response");
 
 if ($log_http_code !== 201) {
     error_log("Error al registrar la petición en peticiones_log: " . $log_response);
@@ -73,7 +69,6 @@ if ($response === false) {
 curl_close($ch);
 
 $data = json_decode($response, true);
-error_log("Consulta a historia_clinica - Código HTTP: $http_code, Datos: " . json_encode($data));
 
 // Actualizar el estado en peticiones_log
 $update_log_data = [
@@ -89,11 +84,8 @@ curl_setopt($ch_update, CURLOPT_HTTPHEADER, [
     "Content-Type: application/json",
     "Prefer: return=representation"
 ]);
-$update_response = curl_exec($ch_update);
-$update_http_code = curl_getinfo($ch_update, CURLINFO_HTTP_CODE);
+curl_exec($ch_update);
 curl_close($ch_update);
-
-error_log("Actualización de peticiones_log - Código HTTP: $update_http_code, Respuesta: $update_response");
 
 if ($http_code === 200 && !empty($data)) {
     $paciente = $data[0];
@@ -125,7 +117,9 @@ if ($http_code === 200 && !empty($data)) {
     $ultimo_http_code = curl_getinfo($ch_ultimo, CURLINFO_HTTP_CODE);
     curl_close($ch_ultimo);
 
-    error_log("Actualización de ultimo_paciente - Código HTTP: $ultimo_http_code, Respuesta: $ultimo_response");
+    if ($ultimo_http_code !== 200 && $ultimo_http_code !== 201) {
+        error_log("Error al actualizar ultimo_paciente: Código HTTP $ultimo_http_code, Respuesta: $ultimo_response");
+    }
 
     echo json_encode([
         "status" => "ok",
