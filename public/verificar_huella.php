@@ -41,6 +41,7 @@ $log_http_code = curl_getinfo($ch_log, CURLINFO_HTTP_CODE);
 curl_close($ch_log);
 
 if ($log_http_code !== 201) {
+    // No detenemos el flujo si falla el log, pero registramos el error en los logs del servidor
     error_log("Error al registrar la petición en peticiones_log: " . $log_response);
 }
 
@@ -88,65 +89,6 @@ curl_close($ch_update);
 
 if ($http_code === 200 && !empty($data)) {
     $paciente = $data[0]; // Primer resultado
-
-    // Actualizar la tabla ultimo_paciente
-    $ultimo_paciente_data = [
-        "codigo" => $codigo,
-        "nombre" => $paciente['nombres_completos'],
-        "cedula" => $paciente['cedula'],
-        "telefono" => $paciente['telefono'],
-        "edad" => $paciente['edad'],
-        "domicilio" => $paciente['domicilio'],
-        "parentesco" => $paciente['parentesco'],
-        "emergencia" => $paciente['contacto_emergencia'],
-    ];
-
-    // Verificar si ya existe una fila en ultimo_paciente
-    $ch_check = curl_init();
-    curl_setopt($ch_check, CURLOPT_URL, "$SUPABASE_URL/rest/v1/ultimo_paciente");
-    curl_setopt($ch_check, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch_check, CURLOPT_HTTPHEADER, [
-        "apikey: $SUPABASE_API_KEY",
-        "Authorization: Bearer $SUPABASE_API_KEY",
-        "Content-Type: application/json"
-    ]);
-    $check_response = curl_exec($ch_check);
-    curl_close($ch_check);
-    $ultimo_paciente = json_decode($check_response, true);
-
-    if (empty($ultimo_paciente)) {
-        // Insertar nueva fila
-        $ch_ultimo = curl_init();
-        curl_setopt($ch_ultimo, CURLOPT_URL, "$SUPABASE_URL/rest/v1/ultimo_paciente");
-        curl_setopt($ch_ultimo, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch_ultimo, CURLOPT_POST, true);
-        curl_setopt($ch_ultimo, CURLOPT_POSTFIELDS, json_encode($ultimo_paciente_data));
-        curl_setopt($ch_ultimo, CURLOPT_HTTPHEADER, [
-            "apikey: $SUPABASE_API_KEY",
-            "Authorization: Bearer $SUPABASE_API_KEY",
-            "Content-Type: application/json",
-            "Prefer: return=representation"
-        ]);
-        curl_exec($ch_ultimo);
-        curl_close($ch_ultimo);
-    } else {
-        // Actualizar la fila existente
-        $id = $ultimo_paciente[0]['id'];
-        $ch_ultimo = curl_init();
-        curl_setopt($ch_ultimo, CURLOPT_URL, "$SUPABASE_URL/rest/v1/ultimo_paciente?id=eq.$id");
-        curl_setopt($ch_ultimo, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch_ultimo, CURLOPT_CUSTOMREQUEST, "PATCH");
-        curl_setopt($ch_ultimo, CURLOPT_POSTFIELDS, json_encode($ultimo_paciente_data));
-        curl_setopt($ch_ultimo, CURLOPT_HTTPHEADER, [
-            "apikey: $SUPABASE_API_KEY",
-            "Authorization: Bearer $SUPABASE_API_KEY",
-            "Content-Type: application/json",
-            "Prefer: return=representation"
-        ]);
-        curl_exec($ch_ultimo);
-        curl_close($ch_ultimo);
-    }
-
     echo json_encode([
         "status" => "ok",
         "message" => "Paciente encontrado",
