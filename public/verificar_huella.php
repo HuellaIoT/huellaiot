@@ -17,7 +17,35 @@ if (empty($codigo)) {
     exit;
 }
 
-// Llamar a la API REST de Supabase
+// Registrar la petición en la tabla peticiones_log
+$log_data = [
+    "codigo" => $codigo,
+    "fecha" => date('c'), // Formato ISO 8601 para la fecha
+    "estado" => "pendiente" // Estado inicial
+];
+
+$ch_log = curl_init();
+curl_setopt($ch_log, CURLOPT_URL, "$SUPABASE_URL/rest/v1/peticiones_log");
+curl_setopt($ch_log, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch_log, CURLOPT_POST, true);
+curl_setopt($ch_log, CURLOPT_POSTFIELDS, json_encode($log_data));
+curl_setopt($ch_log, CURLOPT_HTTPHEADER, [
+    "apikey: $SUPABASE_API_KEY",
+    "Authorization: Bearer $SUPABASE_API_KEY",
+    "Content-Type: application/json",
+    "Prefer: return=representation"
+]);
+
+$log_response = curl_exec($ch_log);
+$log_http_code = curl_getinfo($ch_log, CURLINFO_HTTP_CODE);
+curl_close($ch_log);
+
+if ($log_http_code !== 201) {
+    // No detenemos el flujo si falla el log, pero registramos el error en los logs del servidor
+    error_log("Error al registrar la petición en peticiones_log: " . $log_response);
+}
+
+// Llamar a la API REST de Supabase para consultar historia_clinica
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, "$SUPABASE_URL/rest/v1/historia_clinica?huella_dactilar=eq.$codigo");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -41,9 +69,26 @@ curl_close($ch);
 
 $data = json_decode($response, true);
 
-if ($http_code === 200 && !empty($data)) {
-    $paciente = $data[0]; // primer resultado
+// Actualizar el estado en peticiones_log según el resultado
+$update_log_data = [
+    "estado" => ($http_code === 200 && !empty($data)) ? "exitoso" : "fallido"
+];
+$ch_update = curl_init();
+curl_setopt($ch_update, CURLOPT_URL, "$SUPABASE_URL/rest/v1/peticiones_log?codigo=eq.$codigo&fecha=eq." . urlencode($log_data['fecha']));
+curl_setopt($ch_update, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch_update, CURLOPT_CUSTOMREQUEST, "PATCH");
+curl_setopt($ch_update, CURLOPT_POSTFIELDS, json_encode($update_log_data));
+curl_setopt($ch_update, CURLOPT_HTTPHEADER, [
+    "apikey: $SUPABASE_API_KEY",
+    "Authorization: Bearer $SUPABASE_API_KEY",
+    "Content-Type: application/json",
+    "Prefer: return=representation"
+]);
+curl_exec($ch_update);
+curl_close($ch_update);
 
+if ($http_code === 200 && !empty($data)) {
+    $paciente = $data[0]; // Primer resultado
     echo json_encode([
         "status" => "ok",
         "message" => "Paciente encontrado",
