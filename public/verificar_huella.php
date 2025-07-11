@@ -17,11 +17,13 @@ if (empty($codigo)) {
     exit;
 }
 
+error_log("Recibido código: $codigo"); // Depuración en logs del servidor
+
 // Registrar la petición en la tabla peticiones_log
 $log_data = [
     "codigo" => $codigo,
-    "fecha" => date('c'), // Formato ISO 8601 para la fecha
-    "estado" => "pendiente" // Estado inicial
+    "fecha" => date('c'),
+    "estado" => "pendiente"
 ];
 
 $ch_log = curl_init();
@@ -40,8 +42,9 @@ $log_response = curl_exec($ch_log);
 $log_http_code = curl_getinfo($ch_log, CURLINFO_HTTP_CODE);
 curl_close($ch_log);
 
+error_log("Registro en peticiones_log - Código HTTP: $log_http_code, Respuesta: $log_response");
+
 if ($log_http_code !== 201) {
-    // No detenemos el flujo si falla el log, pero registramos el error en los logs del servidor
     error_log("Error al registrar la petición en peticiones_log: " . $log_response);
 }
 
@@ -60,7 +63,9 @@ $response = curl_exec($ch);
 $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
 if ($response === false) {
-    echo json_encode(["status" => "error", "message" => curl_error($ch)]);
+    $error = curl_error($ch);
+    error_log("Error en consulta a historia_clinica: $error");
+    echo json_encode(["status" => "error", "message" => $error]);
     curl_close($ch);
     exit;
 }
@@ -68,14 +73,14 @@ if ($response === false) {
 curl_close($ch);
 
 $data = json_decode($response, true);
+error_log("Consulta a historia_clinica - Código HTTP: $http_code, Datos: " . json_encode($data));
 
-// Actualizar el estado en peticiones_log según el resultado
+// Actualizar el estado en peticiones_log
 $update_log_data = [
     "estado" => ($http_code === 200 && !empty($data)) ? "exitoso" : "fallido"
 ];
 $ch_update = curl_init();
 curl_setopt($ch_update, CURLOPT_URL, "$SUPABASE_URL/rest/v1/peticiones_log?codigo=eq.$codigo&fecha=eq." . urlencode($log_data['fecha']));
-curl_setopt($ch_update, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch_update, CURLOPT_CUSTOMREQUEST, "PATCH");
 curl_setopt($ch_update, CURLOPT_POSTFIELDS, json_encode($update_log_data));
 curl_setopt($ch_update, CURLOPT_HTTPHEADER, [
@@ -84,11 +89,44 @@ curl_setopt($ch_update, CURLOPT_HTTPHEADER, [
     "Content-Type: application/json",
     "Prefer: return=representation"
 ]);
-curl_exec($ch_update);
+$update_response = curl_exec($ch_update);
+$update_http_code = curl_getinfo($ch_update, CURLINFO_HTTP_CODE);
 curl_close($ch_update);
 
+error_log("Actualización de peticiones_log - Código HTTP: $update_http_code, Respuesta: $update_response");
+
 if ($http_code === 200 && !empty($data)) {
-    $paciente = $data[0]; // Primer resultado
+    $paciente = $data[0];
+
+    // Actualizar ultimo_paciente
+    $ultimo_paciente_data = [
+        "id" => 1,
+        "codigo" => $codigo,
+        "nombre" => $paciente['nombres_completos'],
+        "cedula" => $paciente['cedula'],
+        "telefono" => $paciente['telefono'],
+        "edad" => $paciente['edad'],
+        "domicilio" => $paciente['domicilio'],
+        "parentesco" => $paciente['parentesco'],
+        "emergencia" => $paciente['contacto_emergencia']
+    ];
+
+    $ch_ultimo = curl_init();
+    curl_setopt($ch_ultimo, CURLOPT_URL, "$SUPABASE_URL/rest/v1/ultimo_paciente?id=eq.1");
+    curl_setopt($ch_ultimo, CURLOPT_CUSTOMREQUEST, "PATCH");
+    curl_setopt($ch_ultimo, CURLOPT_POSTFIELDS, json_encode($ultimo_paciente_data));
+    curl_setopt($ch_ultimo, CURLOPT_HTTPHEADER, [
+        "apikey: $SUPABASE_API_KEY",
+        "Authorization: Bearer $SUPABASE_API_KEY",
+        "Content-Type: application/json",
+        "Prefer: return=representation"
+    ]);
+    $ultimo_response = curl_exec($ch_ultimo);
+    $ultimo_http_code = curl_getinfo($ch_ultimo, CURLINFO_HTTP_CODE);
+    curl_close($ch_ultimo);
+
+    error_log("Actualización de ultimo_paciente - Código HTTP: $ultimo_http_code, Respuesta: $ultimo_response");
+
     echo json_encode([
         "status" => "ok",
         "message" => "Paciente encontrado",
