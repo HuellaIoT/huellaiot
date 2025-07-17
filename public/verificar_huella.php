@@ -10,11 +10,30 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit;
 }
 
-$codigo = $_POST['codigo'] ?? '';
+$encryptedCode = $_POST['codigo'] ?? '';
 
-if (empty($codigo)) {
+if (empty($encryptedCode)) {
     echo json_encode(["status" => "error", "message" => "Código de huella no enviado"]);
     exit;
+}
+
+// Desencriptar usando openssl_decrypt
+$key = hex2bin('2b7e151628aed2a6abf7158809cf4f3c2b7e151628aed2a6abf7158809cf4f3c'); // Clave de 256 bits
+$iv = hex2bin('000102030405060708090a0b0c0d0e0f'); // IV de 16 bytes
+$decoded = base64_decode($encryptedCode);
+$codigo = openssl_decrypt($decoded, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
+
+// Verificar si la desencriptación fue exitosa
+if ($codigo === false) {
+    error_log("Error al desencriptar el código: " . openssl_error_string());
+    echo json_encode(["status" => "error", "message" => "Fallo en la desencriptación"]);
+    exit;
+}
+
+// Eliminar padding PKCS7 manualmente
+$pad = ord($codigo[strlen($codigo) - 1]);
+if ($pad <= 16) {
+    $codigo = substr($codigo, 0, -$pad);
 }
 
 // Registrar la petición en la tabla peticiones_log
