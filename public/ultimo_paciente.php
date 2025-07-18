@@ -21,13 +21,22 @@ if (!empty($data)) {
     echo json_encode([
         "success" => true,
         "paciente" => [
-            "nombre" => $ultimoPaciente["nombre"],
-            "edad" => $ultimoPaciente["edad"],
-            "domicilio" => $paciente['domicilio'],
-            "parentesco" => $paciente['parentesco'],
-            "emergencia" => $paciente['contacto_emergencia'],
-            "diagnostico" => $ultimoPaciente["diagnostico"]
-                     // Agrega otros campos según necesites
+            "nombres_completos" => $ultimoPaciente["nombres_completos"] ?? '',
+            "cedula" => $ultimoPaciente["cedula"] ?? '',
+            "telefono" => $ultimoPaciente["telefono"] ?? '',
+            "edad" => $ultimoPaciente["edad"] ?? '',
+            "domicilio" => $ultimoPaciente["domicilio"] ?? '', // Corregido a $ultimoPaciente
+            "parentesco" => $ultimoPaciente["parentesco"] ?? '', // Corregido
+            "contacto_emergencia" => $ultimoPaciente["contacto_emergencia"] ?? '', // Corregido
+            "correo" => $ultimoPaciente["correo"] ?? '',
+            "posee_seguro" => $ultimoPaciente["posee_seguro"] ?? '',
+            "tipo_sangre" => $ultimoPaciente["tipo_sangre"] ?? '',
+            "cirugias" => $ultimoPaciente["cirugias"] ?? '',
+            "patologias" => $ultimoPaciente["patologias"] ?? '',
+            "alergias" => $ultimoPaciente["alergias"] ?? '',
+            "historial_medico" => $ultimoPaciente["historial_medico"] ?? '',
+            "huella_dactilar" => $ultimoPaciente["huella_dactilar"] ?? '',
+            "diagnostico" => $ultimoPaciente["diagnostico"] ?? ''
         ]
     ]);
 } else {
