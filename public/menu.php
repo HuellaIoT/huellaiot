@@ -28,10 +28,10 @@ if (!isset($_SESSION["logueado"])) {
   <h2 class="mb-4">Sistema de Huellas</h2>
   <div class="row justify-content-center image-container mb-4">
     <div class="col-auto">
-      <img src="imagen1.jpg" alt="Imagen 1" class="img-fluid custom-image">
+      <img src="espoch.jpg" alt="Imagen 1" class="img-fluid custom-image">
     </div>
     <div class="col-auto">
-      <img src="imagen2.jpg" alt="Imagen 2" class="img-fluid custom-image">
+      <img src="fie.jpg" alt="Imagen 2" class="img-fluid custom-image">
     </div>
   </div>
   <div class="d-grid gap-3 col-4 mx-auto">
