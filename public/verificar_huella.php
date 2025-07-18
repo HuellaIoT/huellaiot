@@ -109,17 +109,25 @@ curl_close($ch_update);
 if ($http_code === 200 && !empty($data)) {
     $paciente = $data[0];
 
-    // Actualizar ultimo_paciente
+    // Actualizar ultimo_paciente con todos los campos
     $ultimo_paciente_data = [
         "id" => 1,
         "codigo" => $codigo,
-        "nombre" => $paciente['nombres_completos'],
-        "cedula" => $paciente['cedula'],
-        "telefono" => $paciente['telefono'],
-        "edad" => $paciente['edad'],
-        "domicilio" => $paciente['domicilio'],
-        "parentesco" => $paciente['parentesco'],
-        "emergencia" => $paciente['contacto_emergencia']
+        "nombres_completos" => $paciente['nombres_completos'] ?? '',
+        "cedula" => $paciente['cedula'] ?? '',
+        "correo" => $paciente['correo'] ?? '',
+        "posee_seguro" => $paciente['posee_seguro'] ?? '',
+        "edad" => $paciente['edad'] ?? '',
+        "domicilio" => $paciente['domicilio'] ?? '',
+        "contacto_emergencia" => $paciente['contacto_emergencia'] ?? '',
+        "parentesco" => $paciente['parentesco'] ?? '',
+        "tipo_sangre" => $paciente['tipo_sangre'] ?? '',
+        "cirugias" => $paciente['cirugias'] ?? '',
+        "patologias" => $paciente['patologias'] ?? '',
+        "alergias" => $paciente['alergias'] ?? '',
+        "historial_medico" => $paciente['historial_medico'] ?? '',
+        "huella_dactilar" => $paciente['huella_dactilar'] ?? '',
+        "telefono" => $paciente['telefono'] ?? ''
     ];
 
     $ch_ultimo = curl_init();
@@ -140,16 +148,25 @@ if ($http_code === 200 && !empty($data)) {
         error_log("Error al actualizar ultimo_paciente: Código HTTP $ultimo_http_code, Respuesta: $ultimo_response");
     }
 
+    // Responder con todos los campos
     echo json_encode([
         "status" => "ok",
         "message" => "Paciente encontrado",
-        "nombre" => $paciente['nombres_completos'],
-        "cedula" => $paciente['cedula'],
-        "telefono" => $paciente['telefono'],
-        "edad" => $paciente['edad'],
-        "domicilio" => $paciente['domicilio'],
-        "parentesco" => $paciente['parentesco'],
-        "emergencia" => $paciente['contacto_emergencia'],
+        "nombres_completos" => $paciente['nombres_completos'] ?? '',
+        "cedula" => $paciente['cedula'] ?? '',
+        "correo" => $paciente['correo'] ?? '',
+        "posee_seguro" => $paciente['posee_seguro'] ?? '',
+        "edad" => $paciente['edad'] ?? '',
+        "domicilio" => $paciente['domicilio'] ?? '',
+        "contacto_emergencia" => $paciente['contacto_emergencia'] ?? '',
+        "parentesco" => $paciente['parentesco'] ?? '',
+        "tipo_sangre" => $paciente['tipo_sangre'] ?? '',
+        "cirugias" => $paciente['cirugias'] ?? '',
+        "patologias" => $paciente['patologias'] ?? '',
+        "alergias" => $paciente['alergias'] ?? '',
+        "historial_medico" => $paciente['historial_medico'] ?? '',
+        "huella_dactilar" => $paciente['huella_dactilar'] ?? '',
+        "telefono" => $paciente['telefono'] ?? ''
     ]);
 } else {
     echo json_encode(["status" => "error", "message" => "Paciente no registrado"]);
