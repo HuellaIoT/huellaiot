@@ -18,8 +18,8 @@ if (!isset($_SESSION["logueado"])) {
       margin: 0 10px; /* Espaciado entre imágenes */
     }
     .custom-image {
-      width: 100px; /* Ancho fijo, ajusta según necesites */
-      max-height: 50px; /* Alto máximo, ajusta según necesites */
+      width: 140px; /* Ancho fijo, ajusta según necesites */
+      max-height: 100px; /* Alto máximo, ajusta según necesites */
       object-fit: cover; /* Recorta o ajusta la imagen para llenar el espacio */
     }
   </style>
